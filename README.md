@@ -4,13 +4,13 @@
 Sunday 10th February 10:00 to 12:00
 
 ## Where
-Dolder [This link](https://www.doldersports.com/en/winter-front-page-en/ice-skating-rink/ "Title") 
+[Dolder](https://www.doldersports.com/en/winter-front-page-en/ice-skating-rink/ "Title") 
 
 ## Requisite
-Full equipment is available at Dolder including skates, protection hockey stick etc. Just bring a towel.
+Full equipment is available at Dolder including skates, protection hockey stick etc. Just bring a towel and cash.
 
 ## Cost
-75 CHF, final cost will depend on how many people show up in case we have some money left it will be spent on beer and dental care
+75 CHF, final cost will depend on how many people show up, in case we have some money left it will be spent on beer and dental care
 
 ## How to register
 Two ways exist
@@ -23,6 +23,9 @@ Two ways exist
 * Benjamin
 * Ueli 
 * __Your name here__
+
+Please add you equipment size before the name and a G if you want to be goalie. We need to tell Dolder how many sets we need no later than 5th Feb
+![Alt text](doodle.png)
 
 
 ![Alt text](hanson.jpg)
