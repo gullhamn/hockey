@@ -25,7 +25,8 @@ Two ways exist
 * __Your name here__
 
 Please add you equipment size before the name and a G if you want to be goalie. We need to tell Dolder how many sets we need no later than 5th Feb
-![Alt text](doodle.png)
+
+![Alt text](doodle.PNG)
 
 
 ![Alt text](hanson.jpg)
