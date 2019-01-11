@@ -15,7 +15,7 @@ Full equipment is available at Dolder including skates, protection hockey stick 
 ## How to register
 Two ways exist
 
-1. Doodle
+1. [Doodle](https://doodle.com/poll/ttvskx8gsmmtswzr "Title")
 2. Merge request updating the list below
 
 * David
