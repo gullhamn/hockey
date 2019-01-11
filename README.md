@@ -1,5 +1,7 @@
 # Hockey 1.0
 
+The Sport Event of the year
+
 ## When
 Sunday 10th February 10:00 to 12:00
 
@@ -28,8 +30,15 @@ Please add you equipment size before the name and a G if you want to be goalie. 
 
 ![Alt text](doodle.PNG)
 
+## Deadline
+Please register asap, no later than 31st Jan
+
+## Communication
+Whats's up group https://chat.whatsapp.com/KTdPAVc2USg84PP4k8hwUi
 
 ![Alt text](hanson.jpg)
+
+
 
 ## FAQ
 
