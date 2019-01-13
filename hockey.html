@@ -1,0 +1,562 @@
+<link rel="stylesheet" type="text/css" href="hockey.css" />
+
+<head>
+    <title>Hockey v1.0 Dolder 10th Feb 2019</title>
+</head>
+<div class="wrapper">
+    <div class="title">Dolder 10th Feb - Training</div>
+    <div id="left"></div>
+    <div class="box main border">
+
+        <div id="canvas-wrapper" class="content">
+            <canvas id="iceCanvas" width="312" height="600"></canvas>
+            <canvas id="playerCanvas" width="312" height="600"></canvas>
+        </div>
+    </div>
+    <div id="right">
+        <img src="das-keyboard.png" />
+    </div>
+    <div id="score">3 tries left</div>
+
+    <div id="level1" class="all grid44" style="display:none">
+        <div class="text1">LEVEL 1</div>
+        <div class="text2">Hit the Puck</div>
+    </div>
+    <div id="level2" class="all grid44" style="display:none">            
+            <div class="text1">LEVEL 2</div>
+            <div class="text2">Now hit a moving Puck</div>
+    </div>
+
+    <div id="level3" class="all grid44" style="display:none">            
+        <div class="text1">LEVEL 3</div>
+        <div class="text2">Crosscheck Opponent</div>
+    </div>
+
+    <div id="well1" class="all grid44" style="display:none">
+        <div class="text0">Awesomeness!</div>
+        <div class="img1"><img src="forsberg.jpg" /></div>
+    </div>
+
+    <div id="well2" class="all grid44" style="display:none">
+        <div class="text0">Krutovness!</div>
+        <div class="img1"><img src="cccp.png" /></div>
+    </div>
+
+    <div id="well3" class="all grid44" style="display:none">
+            <div class="text0">Well done</div>
+            <div class="text1" style="font-size:100%">See you at Dolder on Sunday</div>
+            <div class="img1"><img src="vm2003.jpg" /></div>
+        </div>
+
+    <div id="loose" class="all grid44" style="display:none">
+        <div class="text0">You Loose</div>
+        <div class="text1"><button id="restart">Play Again</button></div>
+        <div class="img1"><img src="loose.jpg" /></div>
+    </div>
+
+    <script type="module">
+        const PUCKRADIUS = 15;
+        const FIN_HEAD_RADIUS = 10;
+        const Y_START = 700;
+
+        const offScreen = new OffscreenCanvas(312, 600);
+        const ctx = offScreen.getContext('2d');
+
+        const iceScreen = document.getElementById("iceCanvas");
+        const iceCtx = iceScreen.getContext('2d');
+
+        const playerScreen = document.getElementById("playerCanvas");
+        const playerCtx = playerScreen.getContext('2d');
+
+        const spriteOffscreen = new OffscreenCanvas(200, 200);
+        const spriterCtx = spriteOffscreen.getContext('2d');
+
+        const finOffscreen = new OffscreenCanvas(200, 200);
+        const finCtx = finOffscreen.getContext('2d');
+
+
+        async function loadImages() {
+            const rink = await loadImageAsync("rink.jpg");
+            const player = await loadImageAsync("player3.png");
+            const puck = await loadImageAsync("puck.png");
+            const finPlayer =  await loadImageAsync("finPlayer.png");
+            const playerDown = await loadImageAsync("playerDown.png");
+            const xPlayer = [3];
+            for(var i=0;i<3;i++){
+                xPlayer[i] = await loadImageAsync(`crosscheck${i+1}.png`);
+            }
+
+            iceCtx.drawImage(rink, 0, 0);
+
+            ctx.drawImage(player, 0, 0);
+            ctx.drawImage(finPlayer,0,100);
+            ctx.drawImage(playerDown,60,100);
+            ctx.drawImage(puck, 60, 0);
+
+            for(var i=0;i<3;i++){
+                ctx.drawImage(xPlayer[i],60*i,200);
+            }
+            
+        }
+
+        async function loadImageAsync(file) {
+            const url = file;
+            return new Promise((resolve, reject) => {
+                let img = new Image();
+                img.addEventListener('load', e => resolve(img));
+                img.addEventListener('error', () => {
+                    reject(new Error(`Failed to load image's URL: ${url}`));
+                });
+                img.src = url;
+            });
+        }
+        var imgLoaded = loadImages();
+
+        const dotRadius = 3;
+        const dotOffsetX = 100;
+        const dotOffsetY = 100;
+        const finPos = {x:100,y:500};
+        var xMode=0;
+        function draw() {
+            playerCtx.clearRect(0, 0, playerScreen.width, playerScreen.height);
+            playerCtx.drawImage(spriteOffscreen, 0, 0, 200, 200, x - 100, y - 100, 200, 200)
+
+            
+
+            playerCtx.drawImage(offScreen, 60, 0, 32, 32, puckX - 16, puckY - 16, 32, 32)
+
+
+            if(level == 3){
+                playerCtx.drawImage(finOffscreen,0,0,200,200,finPos.x-100,finPos.y-100,200,200);
+            }
+
+            if(level != 3){
+                const stick = stickPos();
+                playerCtx.beginPath();
+                playerCtx.arc(stick.x, stick.y, dotRadius, 0, 2 * Math.PI, false);
+                playerCtx.fillStyle = 'green';
+                playerCtx.fill();
+                playerCtx.lineWidth = 1;
+                playerCtx.strokeStyle = '#003300';
+                playerCtx.stroke();
+            }
+            else{
+                //draw xCheck point
+                const stick = crossPos();
+                playerCtx.beginPath();
+                playerCtx.arc(stick.x, stick.y, dotRadius, 0, 2 * Math.PI, false);
+                playerCtx.fillStyle = 'green';
+                playerCtx.fill();
+                playerCtx.lineWidth = 1;
+                playerCtx.strokeStyle = '#003300';
+                playerCtx.stroke();
+
+                //Fin head
+                playerCtx.beginPath();
+                playerCtx.arc(finPos.x, finPos.y, dotRadius, 0, 2 * Math.PI, false);
+                playerCtx.fillStyle = 'yellow';
+                playerCtx.fill();
+                playerCtx.lineWidth = 1;
+                playerCtx.strokeStyle = '#003300';
+                playerCtx.stroke();
+
+            }
+
+
+            playerCtx.beginPath();
+            playerCtx.arc(x, y, dotRadius, 0, 2 * Math.PI, false);
+            playerCtx.fillStyle = 'red';
+            playerCtx.fill();
+            playerCtx.lineWidth = 1;
+            playerCtx.strokeStyle = '#003300';
+            playerCtx.stroke();
+        }
+
+
+        var start;
+        var x = 312 / 2 - 50;
+        var y = Y_START;
+
+        
+
+        var triesLeft=3;
+        var puckX = 312 / 2;
+        var puckY = 600 / 2;
+
+        var count = 0
+        var score = 0
+        var dx, dy;
+
+        var level = 1;
+
+        var puckDelta = {x:0,y:0}
+
+        const scoreDiv = document.getElementById("score")
+        
+        var puckhit = false;
+        var finHit = false;
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            var progress = timestamp - start;
+            count++;
+
+            if(level<3){
+                const stickOnPuck = stickAtPuck();            
+                if (!puckhit && stickOnPuck ) {
+                    score++;                
+                    puckDelta = hitVector();
+                    puckhit = true;
+                    
+                    if(level==1){
+                        setTimeout(level1Complete,800);
+                    }
+                    else if(level==2){
+                        setTimeout(level2Complete,800);
+                    }
+                }
+                else if(!stickOnPuck){
+                    puckhit = false;
+                }
+            }
+            else{                
+                if(xMode==2){
+                    const crossOnFin = crossAtFin();
+                    if(crossOnFin){
+                        finHit=true;
+                        drawSpriteFin();
+                        setTimeout(level3Complete,1500)
+                    }                    
+                }
+            }
+
+            if (count % 4 == 0) {
+                dx = Math.floor((Math.random() * 5)) - 2;
+                dy = -1;
+            }
+            else {
+                dx = 0;
+                dy = -2;
+            }
+           
+            puckX += puckDelta.x;
+            puckY += puckDelta.y;
+
+            draw()
+            //playerCtx.transform(0,0,0,0,0,dy);
+
+            x = x + dx;
+            y = y + dy;
+
+            //element.style.transform = 'translateX(' + Math.min(progress / 10, 200) + 'px)';
+            //if (progress < 2000) {
+           
+            //}
+
+            if (y < -100) {                             
+                if(!finHit){
+                    triesLeft--;
+                }
+
+                if(triesLeft==0){
+                    setTimeout(loose,500)
+                    return;
+                }
+                else{
+                    if(level ==1){
+                        level1Try();
+                        
+                    }
+                    else if(level==2){
+                        level2Try();                        
+                    }
+                    else if(level==3){
+                        level3Try();
+                    }
+                }
+            }
+
+            if(puckX<16 || puckX > (312-16)){
+                puckDelta.x = -puckDelta.x;
+            }
+
+            window.requestAnimationFrame(step);
+            
+            
+        }
+
+
+        
+        //playerCtx.translate(28,83)//head of player
+
+
+
+        const alphaDelta = 10 * Math.PI / 180;
+        var alpha = 0;
+        window.addEventListener("keydown", ke => {
+            console.log("Key pressed" + ke.keyCode)
+            if (ke.keyCode == 39) {
+
+                spriterCtx.rotate(alphaDelta);
+                alpha += alphaDelta;
+                if(level != 3){
+                    drawSprite();
+                }
+                else{
+                    drawXSprite();
+                }
+
+
+            }
+            else if (ke.keyCode == 37) {
+                spriterCtx.rotate(-alphaDelta);
+                alpha -= alphaDelta;
+                if(level != 3){
+                    drawSprite();
+                }
+                else{
+                    drawXSprite();
+                }
+            }            
+            else if(ke.keyCode ==32 && xMode==0){
+                xMode = 1;
+                drawXSprite();
+                setTimeout(()=>{
+                    xMode=2
+                    drawXSprite();
+                },400);
+                
+                setTimeout(()=>{
+                    xMode=0
+                    drawXSprite();
+                },1000);
+            }
+
+        });
+
+        document.getElementById("restart").addEventListener("click",restart,false);
+
+        const stickLength = 60;
+
+        function stickPos() {
+            //Stick is located at the green dot when alpha is 0
+            var stickX = x - 100 + dotOffsetX;
+            var stickY = y - stickLength;
+
+            //Compensate for rotation
+            stickX = Math.floor(stickX + Math.sin(alpha) * stickLength);
+            stickY = Math.floor(stickY + (stickLength - Math.cos(alpha) * stickLength));
+
+            return { x: stickX, y: stickY }
+        }
+
+        const strickXLength = 36;
+        function crossPos() {
+            //Stick is located at the green dot when alpha is 0
+            var stickX = x - 100 + dotOffsetX;
+            var stickY = y - strickXLength;
+
+            //Compensate for rotation
+            stickX = Math.floor(stickX + Math.sin(alpha) * strickXLength);
+            stickY = Math.floor(stickY + (strickXLength - Math.cos(alpha) * strickXLength));
+
+            return { x: stickX, y: stickY }
+        }
+
+
+        function stickAtPuck() {
+            var sp = stickPos();
+            const dx = Math.abs(sp.x - puckX);
+            const dy = Math.abs(sp.y - puckY);
+            //console.log("dist:"+Math.sqrt( dx*dx+dy*dy))
+            return PUCKRADIUS > Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function crossAtFin(){
+            var sp = crossPos();
+            const dx = Math.abs(sp.x - finPos.x);
+            const dy = Math.abs(sp.y - finPos.y);
+            //console.log("dist:"+Math.sqrt( dx*dx+dy*dy))
+            return FIN_HEAD_RADIUS > Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function hitVector() {
+            var sp = stickPos();
+            return {
+                x: puckX - sp.x,
+                y: puckY - sp.y
+            }
+        }
+
+        const CX = 100;
+        const CY = 100;
+        spriterCtx.translate(CX, CY)//head of player  
+        alpha = -3 * alphaDelta;
+        spriterCtx.rotate(alpha);    
+        function drawSprite() {
+            spriterCtx.clearRect(-CX, -CY, 200, 200);
+
+            //spriterCtx.strokeStyle = "#FF0000";
+            //spriterCtx.strokeRect(-CX, -CY, 200, 200);
+            //Draw image so that player head is on center
+            spriterCtx.drawImage(offScreen, 0, 0, 60, 100, -30, -78, 60, 100);
+
+            //Draw translate should be on player head for correct rotation
+            spriterCtx.beginPath();
+            spriterCtx.arc(0, 0, dotRadius, 0, 2 * Math.PI, false);
+            spriterCtx.fillStyle = 'blue';
+            spriterCtx.fill();
+            spriterCtx.lineWidth = 1;
+            spriterCtx.strokeStyle = '#003300';
+            spriterCtx.stroke();
+        }
+
+        function drawXSprite(){
+            spriterCtx.clearRect(-CX, -CY, 200, 200);
+
+            spriterCtx.strokeStyle = "#FF0000";
+            spriterCtx.strokeRect(-CX, -CY, 200, 200);
+            //Draw image so that player head is on center
+            spriterCtx.drawImage(offScreen,  xMode*60, 200,60,100, -30, -78, 60, 100);
+
+            //Draw translate should be on player head for correct rotation
+            spriterCtx.beginPath();
+            spriterCtx.arc(0, 0, dotRadius, 0, 2 * Math.PI, false);
+            spriterCtx.fillStyle = 'blue';
+            spriterCtx.fill();
+            spriterCtx.lineWidth = 1;
+            spriterCtx.strokeStyle = '#003300';
+            spriterCtx.stroke();
+        }
+        
+        finCtx.translate(CX, CY)
+        finCtx.rotate(Math.PI);
+        function drawSpriteFin(){
+            finCtx.clearRect(-CX,-CY,200,200);            
+            
+            if(!finHit){
+                finCtx.drawImage(offScreen,0,100,60,100,-33,-78,60,100)            
+            }
+            else{
+                finCtx.drawImage(offScreen,60,100,60,100,-33,-78,60,100)            
+            }
+        }
+
+        imgLoaded        
+        .then(startLevel1)            
+        .then(draw)
+       
+            
+        
+        
+
+        function startLevel1(){
+            finHit = false;
+            triesLeft = 3;
+            document.getElementById("level1").style.display= "grid";
+
+            level =1;
+                    
+            //alpha = -3 * alphaDelta;
+            //spriterCtx.rotate(alpha);                  
+            drawSprite();
+       
+            setTimeout( ()=>{
+                level1Try()
+                window.requestAnimationFrame(step);   
+            }, 1000)
+            
+        }
+
+        function level1Try(){
+            document.getElementById("level1").style.display = "none";
+            scoreDiv.textContent = `${triesLeft} tries left`;
+
+            y = Y_START;
+            x = 312/2-10;
+            puckX = 312 / 2;
+            puckY = 600 / 2;            
+            puckDelta = {x:0,y:0}
+        }
+
+        function level1Complete(){
+            //Show well done
+            document.getElementById("well1").style.display="grid";
+            setTimeout(startLevel2,1000);
+        }
+
+        function level2Complete(){
+            //Show well done
+            document.getElementById("well2").style.display="grid";
+            setTimeout(startLevel3,1000);
+        }
+
+
+
+        function startLevel2(){
+            triesLeft = 3;
+            level = 2;
+            document.getElementById("well1").style.display="none";
+            document.getElementById("level2").style.display= "grid";
+            
+            setTimeout(level2Try,1000);
+        }
+
+        function level2Try(){
+            scoreDiv.textContent = `${triesLeft} tries left`;
+            y=Y_START;
+            level2.style.display="none";
+            puckX = Math.floor(Math.random() * (200-32)) + 16;
+            puckY = 32;
+            puckDelta = {
+                x: Math.floor(Math.random() *5) -2,
+                y: 2
+            }
+        }
+
+        function startLevel3(){
+            triesLeft = 3;
+            x = 100;
+            document.getElementById("well2").style.display="none";
+            document.getElementById("level3").style.display= "grid";
+            drawXSprite();
+            drawSpriteFin();
+            setTimeout(level3Try,1000);
+        }
+
+        function level3Try(){
+            xMode = 0;
+            level = 3;
+            finPos.x=100;
+            finPos.y=200;
+            finHit = false;
+
+            scoreDiv.textContent = `${triesLeft} tries left`;
+            y=Y_START;
+            level3.style.display="none";
+
+            puckX = 312 / 2;
+            puckY = 600 / 2;            
+            puckDelta = {x:0,y:0}
+        }
+
+        function level3Complete(){
+            //Show well done
+            document.getElementById("well3").style.display="grid";
+            
+        }
+
+
+        function loose(){
+            document.getElementById("loose").style.display="grid";
+
+        }
+
+        function restart(){
+            document.getElementById("loose").style.display="none";
+            document.getElementById("well3").style.display="none";
+            startLevel1();
+          
+        }
+
+    </script>
+</div>
