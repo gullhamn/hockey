@@ -23,7 +23,7 @@ body {
 .grid{
   display:grid;
   grid-template-columns: [left] 1fr [main] 4fr auto [right] 1fr;
-  grid-template-rows: [title] 40px [r1] 40px [main] 100vh;
+  grid-template-rows: [title] 40px [r1] 40px [main] 90vh;
 }
 
 .grid > [style^='--aspect-ratio']::before {
@@ -42,7 +42,7 @@ body {
 .grid canvas {
   grid-column: main;
   grid-row:main;
-  max-width: 600px;
+  max-width: 500px;
   align-self: top;
   justify-self: center;
 }
