@@ -328,7 +328,12 @@
             const radian = gamma / Math.PI / 2;
             spriterCtx.rotate(gamma);
             alpha = gamma;
-            drawSprite();
+            if (level != 3) {
+                drawSprite();
+            }
+            else {
+                drawXSprite();
+            }
         }
 
         //playerCtx.translate(28,83)//head of player
