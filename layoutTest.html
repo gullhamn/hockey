@@ -1,0 +1,78 @@
+<head>
+    <style>
+        body{
+            background-color: blue;         
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns: [left] 1fr [main] 4fr [right] 1fr; 
+            grid-template-rows: [main] 100vh; 
+            
+            /*justify-items: stretch;*/
+        }
+        .grid > * {
+            /*background: orange;*/
+            width: 100%;
+        }
+
+        .grid > [style^='--aspect-ratio']::before {
+            content: "";
+            display: inline-block;
+            width: 1px;
+            height: 0;
+            padding-bottom: calc(100% / (var(--aspect-ratio)));
+        }
+
+        .grid canvas {
+            grid-column: main;
+            grid-row:main;
+            
+        }
+    </style>
+</head>
+<body class="grid">
+    
+    <canvas id="canvas1" style="--aspect-ratio: 2/1;" width="300" height="600">
+
+    </canvas>
+
+    <canvas id="canvas2" style="--aspect-ratio: 2/1;" width="300" height="600">
+
+    </canvas>
+</body>
+
+<script type="module">
+   
+   const canvas1 = document.getElementById("canvas1");
+   const ctx1 = canvas1.getContext('2d');
+
+   const canvas2 = document.getElementById("canvas2");
+   const ctx2 = canvas2.getContext('2d');
+        async function loadImageAsync(file) {
+            const url = file;
+            return new Promise((resolve, reject) => {
+                let img = new Image();
+                img.addEventListener('load', e => resolve(img));
+                img.addEventListener('error', () => {
+                    reject(new Error(`Failed to load image's URL: ${url}`));
+                });
+                img.src = url;
+            });
+        }
+    
+        async function loadImages() {
+            const rink = await loadImageAsync("rink.jpg");
+            const player = await loadImageAsync("player3.png");
+            const puck = await loadImageAsync("puck.png");
+            
+
+            ctx1.drawImage(player, 150-30, 300-50);
+            ctx2.drawImage(player, 150-30, 400);
+            
+            
+        }
+
+    var imgLoaded = loadImages();
+
+</script>

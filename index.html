@@ -3,56 +3,57 @@
 <head>
     <title>Hockey v1.0 Dolder 10th Feb 2019</title>
 </head>
-<div class="wrapper">
-    <div class="title">Dolder 10th Feb - Training</div>
-    <div id="left"></div>
-    <div class="box main border">
 
-        <div id="canvas-wrapper" class="content">
-            <canvas id="iceCanvas" width="312" height="600"></canvas>
-            <canvas id="playerCanvas" width="312" height="600"></canvas>
+<body class="grid">
+    
+        <div class="title">Dolder 10th Feb - Training</div>
+        <div id="left"></div>
+        
+        <canvas id="iceCanvas" style="--aspect-ratio: 2/1;" width="312" height="600"></canvas>
+        <canvas id="playerCanvas" style="--aspect-ratio: 2/1;" width="312" height="600"></canvas>
+        
+        <div id="right">
+            <img src="das-keyboard.png" />
         </div>
-    </div>
-    <div id="right">
-        <img src="das-keyboard.png" />
-    </div>
-    <div id="score">3 tries left</div>
+        <div id="score">3 tries left</div>
 
-    <div id="level1" class="all grid44" style="display:none">
-        <div class="text1">LEVEL 1</div>
-        <div class="text2">Hit the Puck</div>
-    </div>
-    <div id="level2" class="all grid44" style="display:none">            
-            <div class="text1">LEVEL 2</div>
-            <div class="text2">Now hit a moving Puck</div>
-    </div>
-
-    <div id="level3" class="all grid44" style="display:none">            
-        <div class="text1">LEVEL 3</div>
-        <div class="text2">Crosscheck Opponent</div>
-    </div>
-
-    <div id="well1" class="all grid44" style="display:none">
-        <div class="text0">Awesomeness!</div>
-        <div class="img1"><img src="forsberg.jpg" /></div>
-    </div>
-
-    <div id="well2" class="all grid44" style="display:none">
-        <div class="text0">Krutovness!</div>
-        <div class="img1"><img src="cccp.png" /></div>
-    </div>
-
-    <div id="well3" class="all grid44" style="display:none">
-            <div class="text0">Well done</div>
-            <div class="text1" style="font-size:100%">See you at Dolder on Sunday</div>
-            <div class="img1"><img src="vm2003.jpg" /></div>
+        <div id="level1" class="all grid44" style="display:none">
+            <div class="text0">LEVEL 1</div>
+            <div class="text1">Hit the Puck</div>
+        </div>
+        <div id="level2" class="all grid44" style="display:none">            
+                <div class="text0">LEVEL 2</div>
+                <div class="text1">Now hit a moving Puck</div>
         </div>
 
-    <div id="loose" class="all grid44" style="display:none">
-        <div class="text0">You Loose</div>
-        <div class="text1"><button id="restart">Play Again</button></div>
-        <div class="img1"><img src="loose.jpg" /></div>
+        <div id="level3" class="all grid44" style="display:none">            
+            <div class="text0">LEVEL 3</div>
+            <div class="text1">Crosscheck Opponent</div>
+        </div>
+
+        <div id="well1" class="all grid44" style="display:none">
+            <div class="text0">Awesomeness!</div>
+            <div class="img1"><img src="forsberg.jpg" /></div>
+        </div>
+
+        <div id="well2" class="all grid44" style="display:none">
+            <div class="text0">Krutovness!</div>
+            <div class="img1"><img src="cccp.png" /></div>
+        </div>
+
+        <div id="well3" class="all grid44" style="display:none">
+                <div class="text0">Well done</div>
+                <div class="text1" style="font-size:100%">See you at Dolder on Sunday</div>
+                <div class="img1"><img src="vm2003.jpg" /></div>
+            </div>
+
+        <div id="loose" class="all grid44" style="display:none">
+            <div class="text0">You Loose</div>
+            <div class="text1"><button id="restart">Play Again</button></div>
+            <div class="img1"><img src="loose.jpg" /></div>
+        </div>
     </div>
+
 
     <script type="module">
         const PUCKRADIUS = 15;
@@ -247,11 +248,7 @@
             x = x + dx;
             y = y + dy;
 
-            //element.style.transform = 'translateX(' + Math.min(progress / 10, 200) + 'px)';
-            //if (progress < 2000) {
-           
-            //}
-
+      
             if (y < -100) {                             
                 if(!finHit){
                     triesLeft--;
@@ -263,14 +260,16 @@
                 }
                 else{
                     if(level ==1){
-                        level1Try();
-                        
+                        level1Try();                        
                     }
                     else if(level==2){
                         level2Try();                        
                     }
                     else if(level==3){
                         level3Try();
+                    }
+                    else if(level==4){
+                        y = Y_START;
                     }
                 }
             }
@@ -323,7 +322,7 @@
                 setTimeout(()=>{
                     xMode=2
                     drawXSprite();
-                },400);
+                },200);
                 
                 setTimeout(()=>{
                     xMode=0
@@ -462,7 +461,7 @@
             setTimeout( ()=>{
                 level1Try()
                 window.requestAnimationFrame(step);   
-            }, 1000)
+            }, 1500)
             
         }
 
@@ -480,13 +479,13 @@
         function level1Complete(){
             //Show well done
             document.getElementById("well1").style.display="grid";
-            setTimeout(startLevel2,1000);
+            setTimeout(startLevel2,1500);
         }
 
         function level2Complete(){
             //Show well done
             document.getElementById("well2").style.display="grid";
-            setTimeout(startLevel3,1000);
+            setTimeout(startLevel3,1500);
         }
 
 
@@ -497,7 +496,7 @@
             document.getElementById("well1").style.display="none";
             document.getElementById("level2").style.display= "grid";
             
-            setTimeout(level2Try,1000);
+            setTimeout(level2Try,1500);
         }
 
         function level2Try(){
@@ -519,7 +518,7 @@
             document.getElementById("level3").style.display= "grid";
             drawXSprite();
             drawSpriteFin();
-            setTimeout(level3Try,1000);
+            setTimeout(level3Try,1500);
         }
 
         function level3Try(){
@@ -541,7 +540,7 @@
         function level3Complete(){
             //Show well done
             document.getElementById("well3").style.display="grid";
-            
+            level = 4;
         }
 
 
@@ -558,4 +557,4 @@
         }
 
     </script>
-</div>
+</body>
