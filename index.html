@@ -290,7 +290,20 @@
             
         }
 
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('deviceorientation', onMontion,false);            
+        }
 
+        
+        function onMontion(e){
+            const gamma =e.gamma;           
+            spriterCtx.resetTransform()
+            spriterCtx.translate(CX, CY)//head of play
+            const radian = gamma/Math.PI/2;
+            spriterCtx.rotate(gamma);
+            alpha =gamma;
+            drawSprite();
+        }
         
         //playerCtx.translate(28,83)//head of player
 
