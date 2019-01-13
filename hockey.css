@@ -42,7 +42,7 @@ body {
 .grid canvas {
   grid-column: main;
   grid-row:main;
-  max-width: 500px;
+  max-width: 550px;
   align-self: top;
   justify-self: center;
 }
