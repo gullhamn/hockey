@@ -55,13 +55,17 @@
         </div>
     </div>
 
+    <canvas id="offScreen"  width="312" height="600" style="display: none"></canvas>
+    <canvas id="spriteOffscreen"  width="200" height="200" style="display: none"></canvas>
+    <canvas id="finOffscreen"  width="200" height="200" style="display: none"></canvas>
 
     <script type="module">
         const PUCKRADIUS = 15;
         const FIN_HEAD_RADIUS = 10;
         const Y_START = 700;
 
-        const offScreen = new OffscreenCanvas(312, 600);
+        //const offScreen = new OffscreenCanvas(312, 600);
+        const offScreen = document.getElementById("offScreen");
         const ctx = offScreen.getContext('2d');
 
         const iceScreen = document.getElementById("iceCanvas");
@@ -70,10 +74,12 @@
         const playerScreen = document.getElementById("playerCanvas");
         const playerCtx = playerScreen.getContext('2d');
 
-        const spriteOffscreen = new OffscreenCanvas(200, 200);
+        //const spriteOffscreen = new OffscreenCanvas(200, 200);
+        const spriteOffscreen = document.getElementById("spriteOffscreen")
         const spriterCtx = spriteOffscreen.getContext('2d');
 
-        const finOffscreen = new OffscreenCanvas(200, 200);
+        //const finOffscreen = new OffscreenCanvas(200, 200);
+        const finOffscreen = document.getElementById("finOffscreen")
         const finCtx = finOffscreen.getContext('2d');
 
 
