@@ -23,7 +23,9 @@ Two ways exist
 * David
 * Adrian
 * Benjamin
-* Ueli 
+* Ueli
+* Esbjörn (XL)
+* Peter Schnyder (L)
 * __Your name here__
 
 Please add you equipment size before the name and a G if you want to be goalie. We need to tell Dolder how many sets we need no later than 5th Feb
